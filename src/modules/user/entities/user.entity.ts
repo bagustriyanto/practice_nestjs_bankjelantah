@@ -3,12 +3,14 @@ import {
   AllowNull,
   Column,
   Default,
+  HasOne,
   IsUUID,
   Length,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
+import { Wallet } from "src/modules/wallet/entities/wallet.entity";
 
 @Table({ tableName: "users" })
 export class User extends Model {
@@ -68,6 +70,9 @@ export class User extends Model {
     type: DataTypes.CHAR(10),
   })
   salt: string;
+
+  @HasOne(() => Wallet)
+  wallet: Wallet;
 
   @Default(true)
   @AllowNull(false)

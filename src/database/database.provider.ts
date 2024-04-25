@@ -1,6 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
+import { PriceTier } from "src/modules/price_tier/entities/price_tier.entity";
 import { Product } from "src/modules/product/entities/product.entity";
+import { Transaction } from "src/modules/transaction/entities/transaction.entity";
 import { User } from "src/modules/user/entities/user.entity";
+import { Wallet } from "src/modules/wallet/entities/wallet.entity";
+import { WalletHistory } from "src/modules/wallet_history/entities/wallet_history.entity";
 
 export const databaseProviders = [
   {
@@ -22,7 +26,14 @@ export const databaseProviders = [
         },
       });
 
-      sequelize.addModels([User, Product]);
+      sequelize.addModels([
+        User,
+        Product,
+        Wallet,
+        WalletHistory,
+        Transaction,
+        PriceTier,
+      ]);
 
       await sequelize.sync();
 

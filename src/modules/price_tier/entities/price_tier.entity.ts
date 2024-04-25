@@ -2,35 +2,32 @@ import {
   AllowNull,
   Column,
   DataType,
-  HasMany,
   IsUUID,
-  Length,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import { Transaction } from "src/modules/transaction/entities/transaction.entity";
 
-@Table({ tableName: "products" })
-export class Product extends Model {
+@Table({ tableName: "price_tiers" })
+export class PriceTier extends Model {
   @IsUUID(4)
   @PrimaryKey
-  @Column
+  @Column({
+    type: DataType.CHAR(32),
+  })
   id: string;
 
-  @Length({ max: 100 })
   @AllowNull(false)
   @Column({
-    type: DataType.CHAR(100),
+    type: DataType.CHAR(20),
   })
-  name: string;
+  userType: string;
 
-  @Length({ max: 10 })
   @AllowNull(false)
   @Column({
-    type: DataType.CHAR(10),
+    type: DataType.INTEGER,
   })
-  unit: string;
+  tier: number;
 
   @AllowNull(false)
   @Column({
@@ -38,8 +35,17 @@ export class Product extends Model {
   })
   price: number;
 
-  @HasMany(() => Transaction)
-  transaction: Transaction;
+  @AllowNull(false)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  maxAmount: number;
+
+  @AllowNull(false)
+  @Column({
+    type: DataType.CHAR(50),
+  })
+  resetEvery: string;
 
   @Column({
     type: DataType.CHAR,
