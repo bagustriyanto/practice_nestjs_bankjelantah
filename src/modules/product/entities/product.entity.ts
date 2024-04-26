@@ -1,7 +1,9 @@
+import { UUIDV4 } from "sequelize";
 import {
   AllowNull,
   Column,
   DataType,
+  Default,
   HasMany,
   IsUUID,
   Length,
@@ -15,6 +17,7 @@ import { Transaction } from "src/modules/transaction/entities/transaction.entity
 export class Product extends Model {
   @IsUUID(4)
   @PrimaryKey
+  @Default(UUIDV4())
   @Column
   id: string;
 

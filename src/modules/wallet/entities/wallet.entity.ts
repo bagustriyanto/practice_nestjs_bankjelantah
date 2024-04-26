@@ -1,8 +1,10 @@
+import { UUIDV4 } from "sequelize";
 import {
   AllowNull,
   BelongsTo,
   Column,
   DataType,
+  Default,
   ForeignKey,
   HasOne,
   IsUUID,
@@ -16,6 +18,7 @@ import { User } from "src/modules/user/entities/user.entity";
 export class Wallet extends Model {
   @IsUUID(4)
   @PrimaryKey
+  @Default(UUIDV4())
   @Column({
     type: DataType.CHAR(32),
   })

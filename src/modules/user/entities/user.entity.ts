@@ -1,3 +1,4 @@
+import { UUIDV4 } from "sequelize";
 import { DataTypes } from "sequelize";
 import {
   AllowNull,
@@ -16,6 +17,7 @@ import { Wallet } from "src/modules/wallet/entities/wallet.entity";
 export class User extends Model {
   @IsUUID(4)
   @PrimaryKey
+  @Default(UUIDV4())
   @Column
   id: string;
 
@@ -57,17 +59,17 @@ export class User extends Model {
   @Column
   lastLoginTime: Date;
 
-  @Length({ max: 32 })
+  @Length({ max: 255 })
   @AllowNull(false)
   @Column({
-    type: DataTypes.CHAR(32),
+    type: DataTypes.CHAR(255),
   })
   password: string;
 
-  @Length({ max: 10 })
+  @Length({ max: 30 })
   @AllowNull(false)
   @Column({
-    type: DataTypes.CHAR(10),
+    type: DataTypes.CHAR(30),
   })
   salt: string;
 

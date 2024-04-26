@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { RouterModule } from "@nestjs/core";
 import { AuthModule } from "../auth/auth.module";
 import { PriceTierModule } from "../price_tier/price_tier.module";
 import { ProductModule } from "../product/product.module";
@@ -16,6 +17,21 @@ import { WalletHistoryModule } from "../wallet_history/wallet_history.module";
     TransactionModule,
     WalletModule,
     WalletHistoryModule,
+    RouterModule.register([
+      {
+        path: "api",
+        children: [
+          {
+            path: "/",
+            module: AuthModule,
+          },
+          {
+            path: "/",
+            module: UserModule,
+          },
+        ],
+      },
+    ]),
   ],
   controllers: [],
   providers: [],

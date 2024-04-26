@@ -1,7 +1,9 @@
+import { UUIDV4 } from "sequelize";
 import {
   AllowNull,
   Column,
   DataType,
+  Default,
   IsUUID,
   Model,
   PrimaryKey,
@@ -12,6 +14,7 @@ import {
 export class PriceTier extends Model {
   @IsUUID(4)
   @PrimaryKey
+  @Default(UUIDV4())
   @Column({
     type: DataType.CHAR(32),
   })
