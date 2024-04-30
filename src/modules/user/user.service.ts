@@ -6,6 +6,17 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { genSalt, hash } from "bcrypt";
 import { userType } from "../shared/constants/user-type.constant.ts";
+import { FindOptions } from "sequelize";
+
+interface UserFilter {
+  fullname: string;
+  userType: string;
+  email: string;
+}
+
+interface Where {
+  where: UserFilter;
+}
 
 @Injectable()
 export class UserService {
@@ -55,16 +66,92 @@ export class UserService {
     return response;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(
+    filter: UserFilter,
+  ): Promise<BaseResponse> {
+    const response = new BaseResponse();
+    const logger = new Logger();
+
+    try {
+      const opt: FindOptions = {};
+      opt.where = {};
+      opt.attributes = {
+        exclude: ["password", "salt"],
+      };
+      if (filter.fullname) opt.where.fullname = filter.fullname;
+      if (filter.email) opt.where.email = filter.email;
+      if (filter.userType) opt.where.userType = filter.userType;
+
+      const { rows, count } = await this.userRepository.findAndCountAll(opt);
+
+      response.data = {
+        recordsTotal: count,
+        recordsFilter: count,
+        items: rows,
+      };
+
+      response.statusCode = "200";
+      response.message = "Find data successfull";
+    } catch (error: unknown) {
+      logger.error(UserService.name + ".findAll", error);
+
+      response.statusCode = "500";
+      response.message = appErrorMessage.internal_server_error;
+    }
+
+    return response;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<BaseResponse> {
+    const response = new BaseResponse();
+    const logger = new Logger();
+
+    try {
+      const data = await this.userRepository.findByPk(id, {
+        attributes: { exclude: ["password", "salt"] },
+      });
+
+      response.data = data;
+      response.statusCode = "200";
+      response.message = "Find data successfull";
+    } catch (error: unknown) {
+      logger.error(UserService.name + ".findOne", error);
+
+      response.statusCode = "500";
+      response.message = appErrorMessage.internal_server_error;
+    }
+
+    return response;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const response = new BaseResponse();
+    const logger = new Logger();
+
+    try {
+      const exists = await this.userRepository.findByPk(id);
+
+      if (!exists) {
+        response.statusCode = "400";
+        response.message = "User not found";
+        return response;
+      }
+
+      exists.fullname = updateUserDto.fullname;
+      exists.phone = updateUserDto.phone;
+
+      await exists.save();
+
+      response.statusCode = "200";
+      response.message = "Update data successfull";
+    } catch (error: unknown) {
+      logger.error(UserService.name + ".findOne", error);
+
+      response.statusCode = "500";
+      response.message = appErrorMessage.internal_server_error;
+    }
+
+    return response;
   }
 
   remove(id: number) {

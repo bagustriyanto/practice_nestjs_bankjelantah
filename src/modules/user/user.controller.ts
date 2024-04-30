@@ -3,16 +3,17 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
-  Patch,
   Post,
+  Put,
+  Query,
   Res,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { Response } from "express";
+import { UserFilter } from "./dto/user-filter.dto";
 
 @Controller({
   path: "users",
@@ -32,18 +33,28 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll(@Query() userFilter: UserFilter, @Res() response: Response) {
+    const result = await this.userService.findAll(userFilter);
+
+    return response.status(parseInt(result.statusCode)).send(result);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param("id") id: string, @Res() response: Response) {
+    const result = await this.userService.findOne(id);
+
+    return response.status(parseInt(result.statusCode)).send(result);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Put(":id")
+  async update(
+    @Param("id") id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() response: Response,
+  ) {
+    const result = await this.userService.update(id, updateUserDto);
+
+    return response.status(parseInt(result.statusCode)).send(result);
   }
 
   @Delete(":id")

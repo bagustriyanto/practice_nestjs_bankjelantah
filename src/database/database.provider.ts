@@ -35,7 +35,7 @@ export const databaseProviders = [
         PriceTier,
       ]);
 
-      await sequelize.sync();
+      // await sequelize.sync();
 
       return sequelize;
     },

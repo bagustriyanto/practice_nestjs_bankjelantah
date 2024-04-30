@@ -1,5 +1,4 @@
 import { IsEmail, IsNotEmpty, MaxLength } from "class-validator";
-import { User } from "../entities/user.entity";
 
 export class CreateUserDto {
   @IsEmail({}, { message: "email format not supported" })
