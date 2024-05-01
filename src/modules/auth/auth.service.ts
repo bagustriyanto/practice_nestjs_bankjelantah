@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Inject, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { hash } from "bcrypt";
+import { BaseResponse } from "../shared/dto/base-response.dto";
+import { User } from "../user/entities/user.entity";
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @Inject("USER_REPOSITORY") private userRepository: typeof User,
+    private jwtService: JwtService,
+  ) {
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async signIn(username: string, password: string): Promise<BaseResponse> {
+    const response = new BaseResponse();
+    const user = await this.userRepository.findOne({
+      where: {
+        email: username,
+      },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    if (!user) {
+      response.statusCode = "400";
+      response.message = "User not found";
+      return response;
+    }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    const hashInputPassword = await hash(password, user.salt);
+    if (hashInputPassword != user.password) {
+      response.statusCode = "400";
+      response.message = "Wrong password";
+      return response;
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const payload = { sub: user.id, username: user.email };
+    const token = await this.jwtService.signAsync(payload);
+
+    response.data = { token };
+    response.statusCode = "200";
+    response.message = "Login success";
+
+    return response;
   }
 }

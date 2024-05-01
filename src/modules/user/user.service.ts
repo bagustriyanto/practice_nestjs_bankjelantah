@@ -124,7 +124,10 @@ export class UserService {
     return response;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<BaseResponse> {
     const response = new BaseResponse();
     const logger = new Logger();
 
@@ -154,7 +157,30 @@ export class UserService {
     return response;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string): Promise<BaseResponse> {
+    const response = new BaseResponse();
+    const logger = new Logger();
+
+    try {
+      const exists = await this.userRepository.findByPk(id);
+
+      if (!exists) {
+        response.statusCode = "400";
+        response.message = "User not found";
+        return response;
+      }
+
+      await exists.destroy();
+
+      response.statusCode = "200";
+      response.message = "Delete data successfull";
+    } catch (error: unknown) {
+      logger.error(UserService.name + ".findOne", error);
+
+      response.statusCode = "500";
+      response.message = appErrorMessage.internal_server_error;
+    }
+
+    return response;
   }
 }
