@@ -7,6 +7,8 @@ import { TransactionModule } from "../transaction/transaction.module";
 import { UserModule } from "../user/user.module";
 import { WalletModule } from "../wallet/wallet.module";
 import { WalletHistoryModule } from "../wallet_history/wallet_history.module";
+import { authGuardProvider } from "./guard/auth/auth.guard.prodiver";
+import { roleGuardProvider } from "./guard/role/role.guard.provider";
 
 @Module({
   imports: [
@@ -34,6 +36,6 @@ import { WalletHistoryModule } from "../wallet_history/wallet_history.module";
     ]),
   ],
   controllers: [],
-  providers: [],
+  providers: [...authGuardProvider, ...roleGuardProvider],
 })
 export class SharedModule {}

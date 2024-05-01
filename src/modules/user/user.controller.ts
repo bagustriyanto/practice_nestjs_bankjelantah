@@ -14,6 +14,8 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { Response } from "express";
 import { UserFilter } from "./dto/user-filter.dto";
+import { Roles } from "../shared/guard/role/role.decorator";
+import { Role } from "../shared/enum/role.enum";
 
 @Controller({
   path: "users",
@@ -22,6 +24,7 @@ import { UserFilter } from "./dto/user-filter.dto";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(Role.Admin)
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -29,21 +32,22 @@ export class UserController {
   ) {
     const result = await this.userService.create(createUserDto);
 
-    return response.status(parseInt(result.statusCode)).send(result);
+    return response.status(result.statusCode).send(result);
   }
 
+  @Roles(Role.Admin)
   @Get()
   async findAll(@Query() userFilter: UserFilter, @Res() response: Response) {
     const result = await this.userService.findAll(userFilter);
 
-    return response.status(parseInt(result.statusCode)).send(result);
+    return response.status(result.statusCode).send(result);
   }
 
   @Get(":id")
   async findOne(@Param("id") id: string, @Res() response: Response) {
     const result = await this.userService.findOne(id);
 
-    return response.status(parseInt(result.statusCode)).send(result);
+    return response.status(result.statusCode).send(result);
   }
 
   @Put(":id")
@@ -54,7 +58,7 @@ export class UserController {
   ) {
     const result = await this.userService.update(id, updateUserDto);
 
-    return response.status(parseInt(result.statusCode)).send(result);
+    return response.status(result.statusCode).send(result);
   }
 
   @Delete(":id")

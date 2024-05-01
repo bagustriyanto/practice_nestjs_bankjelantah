@@ -1,5 +1,5 @@
 export class BaseResponse {
-  statusCode: string;
+  statusCode: number;
   data: object;
   message: object | string;
   error: object | string;

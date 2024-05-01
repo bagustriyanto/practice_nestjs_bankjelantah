@@ -1,21 +1,14 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Res,
-} from "@nestjs/common";
-import { Response, response } from "express";
+import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Response } from "express";
 import { AuthService } from "./auth.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
+import { AllowAnonymous } from "../shared/guard/auth/auth.decorator";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @AllowAnonymous()
   @Post("login")
   async create(
     @Body() createAuthDto: CreateAuthDto,
@@ -26,6 +19,6 @@ export class AuthController {
       createAuthDto.password,
     );
 
-    return response.status(parseInt(result.statusCode)).send(result);
+    return response.status(result.statusCode).send(result);
   }
 }

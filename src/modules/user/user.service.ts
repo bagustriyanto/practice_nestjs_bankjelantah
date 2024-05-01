@@ -14,17 +14,10 @@ interface UserFilter {
   email: string;
 }
 
-interface Where {
-  where: UserFilter;
-}
-
 @Injectable()
 export class UserService {
   /** */
-  constructor(
-    @Inject("USER_REPOSITORY") private userRepository: typeof User,
-  ) {
-  }
+  constructor(@Inject("USER_REPOSITORY") private userRepository: typeof User) {}
 
   async create(createUserDto: CreateUserDto): Promise<BaseResponse> {
     const response = new BaseResponse();
@@ -37,7 +30,7 @@ export class UserService {
         },
       });
       if (isUserExists) {
-        response.statusCode = "400";
+        response.statusCode = 400;
         response.message = "email already exists";
         return response;
       }
@@ -54,21 +47,19 @@ export class UserService {
         userType: userType.personal,
       });
 
-      response.statusCode = "200";
+      response.statusCode = 200;
       response.message = "successfully";
     } catch (error: unknown) {
       logger.error(UserService.name + ".create", error);
 
-      response.statusCode = "500";
+      response.statusCode = 500;
       response.message = appErrorMessage.internal_server_error;
     }
 
     return response;
   }
 
-  async findAll(
-    filter: UserFilter,
-  ): Promise<BaseResponse> {
+  async findAll(filter: UserFilter): Promise<BaseResponse> {
     const response = new BaseResponse();
     const logger = new Logger();
 
@@ -90,12 +81,12 @@ export class UserService {
         items: rows,
       };
 
-      response.statusCode = "200";
+      response.statusCode = 200;
       response.message = "Find data successfull";
     } catch (error: unknown) {
       logger.error(UserService.name + ".findAll", error);
 
-      response.statusCode = "500";
+      response.statusCode = 500;
       response.message = appErrorMessage.internal_server_error;
     }
 
@@ -112,12 +103,12 @@ export class UserService {
       });
 
       response.data = data;
-      response.statusCode = "200";
+      response.statusCode = 200;
       response.message = "Find data successfull";
     } catch (error: unknown) {
       logger.error(UserService.name + ".findOne", error);
 
-      response.statusCode = "500";
+      response.statusCode = 500;
       response.message = appErrorMessage.internal_server_error;
     }
 
@@ -135,7 +126,7 @@ export class UserService {
       const exists = await this.userRepository.findByPk(id);
 
       if (!exists) {
-        response.statusCode = "400";
+        response.statusCode = 400;
         response.message = "User not found";
         return response;
       }
@@ -145,12 +136,12 @@ export class UserService {
 
       await exists.save();
 
-      response.statusCode = "200";
+      response.statusCode = 200;
       response.message = "Update data successfull";
     } catch (error: unknown) {
       logger.error(UserService.name + ".findOne", error);
 
-      response.statusCode = "500";
+      response.statusCode = 500;
       response.message = appErrorMessage.internal_server_error;
     }
 
@@ -165,19 +156,19 @@ export class UserService {
       const exists = await this.userRepository.findByPk(id);
 
       if (!exists) {
-        response.statusCode = "400";
+        response.statusCode = 400;
         response.message = "User not found";
         return response;
       }
 
       await exists.destroy();
 
-      response.statusCode = "200";
+      response.statusCode = 200;
       response.message = "Delete data successfull";
     } catch (error: unknown) {
       logger.error(UserService.name + ".findOne", error);
 
-      response.statusCode = "500";
+      response.statusCode = 500;
       response.message = appErrorMessage.internal_server_error;
     }
 
