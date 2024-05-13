@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Res,
+  Session,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -16,7 +17,6 @@ import { Response } from "express";
 import { UserFilter } from "./dto/user-filter.dto";
 import { Roles } from "../shared/guard/role/role.decorator";
 import { Role } from "../shared/enum/role.enum";
-
 @Controller({
   path: "users",
   version: "1.0",
@@ -37,8 +37,15 @@ export class UserController {
 
   @Roles(Role.Admin)
   @Get()
-  async findAll(@Query() userFilter: UserFilter, @Res() response: Response) {
+  async findAll(
+    @Query() userFilter: UserFilter,
+    @Res() response: Response,
+    @Session() session: Record<string, any>,
+  ) {
     const result = await this.userService.findAll(userFilter);
+
+    session.visits = session.visits ? session.visits + 1 : 1;
+    console.log(session);
 
     return response.status(result.statusCode).send(result);
   }
