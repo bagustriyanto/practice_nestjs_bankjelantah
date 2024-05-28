@@ -4,15 +4,17 @@ import { AppModule } from "./app.module";
 import * as session from "express-session";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
+import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ["debug", "log", "error"],
   });
+  app.use(cookieParser());
   const redisClient = createClient({
     socket: {
-      host: "ap.loclx.io",
-      port: 8379,
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT),
     },
     password: process.env.REDIS_PASSWORD,
   });
@@ -35,6 +37,10 @@ async function bootstrap() {
       saveUninitialized: false,
       name: "session_jelantah",
       store: store,
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      },
     }),
   );
   await app.listen(3000);

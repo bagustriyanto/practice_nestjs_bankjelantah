@@ -8,7 +8,7 @@ import {
   Put,
   Query,
   Res,
-  Session,
+  // Session,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -40,12 +40,9 @@ export class UserController {
   async findAll(
     @Query() userFilter: UserFilter,
     @Res() response: Response,
-    @Session() session: Record<string, any>,
+    // @Session() session: Record<string, any>,
   ) {
     const result = await this.userService.findAll(userFilter);
-
-    session.visits = session.visits ? session.visits + 1 : 1;
-    console.log(session);
 
     return response.status(result.statusCode).send(result);
   }

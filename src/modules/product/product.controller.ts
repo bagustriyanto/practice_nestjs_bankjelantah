@@ -1,15 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  Res,
+} from "@nestjs/common";
+import { ProductService } from "./product.service";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
+import { Request, Response } from "express";
+import { AuthDto } from "../shared/dto/auth.dto";
 
-@Controller('product')
+@Controller("product")
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  async create(
+    @Body() createProductDto: CreateProductDto,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    const { user_auth }: { user_auth: AuthDto } = request.session as any;
+
+    const result = await this.productService.create(
+      createProductDto,
+      user_auth.username,
+    );
+    return response.status(result.statusCode).send(result);
   }
 
   @Get()
@@ -17,18 +39,38 @@ export class ProductController {
     return this.productService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  @Get(":id")
+  async findOne(@Param("id") id: string, @Res() response: Response) {
+    const result = await this.productService.findOne(id);
+    return response.status(result.statusCode).send(result);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  @Patch(":id")
+  async update(
+    @Param("id") id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @Res() response: Response,
+    @Req() request: Request,
+  ) {
+    const { user_auth }: { user_auth: AuthDto } = request.session as any;
+
+    const result = await this.productService.update(
+      id,
+      updateProductDto,
+      user_auth.username,
+    );
+    return response.status(result.statusCode).send(result);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  @Delete(":id")
+  async remove(
+    @Param("id") id: string,
+    @Res() response: Response,
+    @Req() request: Request,
+  ) {
+    const { user_auth }: { user_auth: AuthDto } = request.session as any;
+
+    const result = await this.productService.remove(id, user_auth.username);
+    return response.status(result.statusCode).send(result);
   }
 }

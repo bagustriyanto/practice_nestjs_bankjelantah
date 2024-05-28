@@ -13,7 +13,7 @@ import {
 } from "sequelize-typescript";
 import { Transaction } from "src/modules/transaction/entities/transaction.entity";
 
-@Table({ tableName: "products" })
+@Table({ tableName: "products", paranoid: true })
 export class Product extends Model {
   @IsUUID(4)
   @PrimaryKey
@@ -53,4 +53,9 @@ export class Product extends Model {
     type: DataType.CHAR,
   })
   updatedBy: string;
+
+  @Column({
+    type: DataType.CHAR,
+  })
+  deletedBy: string;
 }

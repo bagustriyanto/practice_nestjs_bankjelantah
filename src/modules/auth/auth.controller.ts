@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
-import { Request, Response } from "express";
+import { Body, Controller, Post, Res, Session } from "@nestjs/common";
+import { Response } from "express";
 import { AuthService } from "./auth.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
 import { AllowAnonymous } from "../shared/guard/auth/auth.decorator";
@@ -13,14 +13,18 @@ export class AuthController {
   async create(
     @Body() createAuthDto: CreateAuthDto,
     @Res() response: Response,
-    @Req() request: Request,
+    @Session() session: Record<string, any>,
   ) {
     const result = await this.authService.signIn(
       createAuthDto.username,
       createAuthDto.password,
     );
 
-    console.log(request.session);
+    const { token, payload } = result.data as any;
+    session.user_auth = payload;
+
+    response.cookie("access_token", token);
+    result.data = {};
 
     return response.status(result.statusCode).send(result);
   }

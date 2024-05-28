@@ -40,7 +40,7 @@ export class AuthService {
     };
     const token = await this.jwtService.signAsync(payload);
 
-    response.data = { token };
+    response.data = { token, payload };
     response.statusCode = 200;
     response.message = "Login success";
 
