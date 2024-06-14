@@ -4,6 +4,8 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { BaseResponse } from "../shared/dto/base-response.dto";
 import { appErrorMessage } from "../shared/constants/app-error-message.constant";
 import { Product } from "./entities/product.entity";
+import { FilterProduct } from "./dto/filter-product";
+import { FindOptions } from "sequelize";
 
 @Injectable()
 export class ProductService {
@@ -38,8 +40,34 @@ export class ProductService {
     return response;
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll(filter: FilterProduct) {
+    const response = new BaseResponse();
+    const logger = new Logger();
+
+    try {
+      const opt: FindOptions = {};
+      opt.where = {};
+      opt.attributes = { exclude: ["deletedAt", "deletedBy"] };
+      if (filter.name) opt.where.fullname = filter.name;
+
+      const { rows, count } = await this.productRepository.findAndCountAll(opt);
+
+      response.data = {
+        recordsTotal: count,
+        recordsFilter: count,
+        items: rows,
+      };
+
+      response.statusCode = 200;
+      response.message = "Find data successfull";
+    } catch (error) {
+      logger.error(`${ProductService.name}.findAll`, error);
+
+      response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+      response.message = appErrorMessage.internal_server_error;
+    }
+
+    return response;
   }
 
   async findOne(id: string): Promise<BaseResponse> {

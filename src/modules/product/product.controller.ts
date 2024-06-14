@@ -3,19 +3,21 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   Req,
   Res,
+  Query,
 } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { Request, Response } from "express";
 import { AuthDto } from "../shared/dto/auth.dto";
+import { FilterProduct } from "./dto/filter-product";
 
-@Controller("product")
+@Controller({ path: "products", version: "1.0" })
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -35,8 +37,8 @@ export class ProductController {
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  findAll(@Query() filter: FilterProduct) {
+    return this.productService.findAll(filter);
   }
 
   @Get(":id")
@@ -45,7 +47,7 @@ export class ProductController {
     return response.status(result.statusCode).send(result);
   }
 
-  @Patch(":id")
+  @Put(":id")
   async update(
     @Param("id") id: string,
     @Body() updateProductDto: UpdateProductDto,

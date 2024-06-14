@@ -10,6 +10,6 @@ export class CreateProductDto {
   unit: string;
 
   @IsNotEmpty({ message: "price cannot be empty" })
-  @Min(0, { message: "price cannot less than 0" })
+  @Min(1, { message: "price cannot less than or equal to 0" })
   price: number;
 }
