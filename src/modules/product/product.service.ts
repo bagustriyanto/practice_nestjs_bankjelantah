@@ -49,6 +49,8 @@ export class ProductService {
       opt.where = {};
       opt.attributes = { exclude: ["deletedAt", "deletedBy"] };
       if (filter.name) opt.where.fullname = filter.name;
+      opt.limit = filter.limit;
+      opt.offset = (filter.page - 1) * filter.limit;
 
       const { rows, count } = await this.productRepository.findAndCountAll(opt);
 

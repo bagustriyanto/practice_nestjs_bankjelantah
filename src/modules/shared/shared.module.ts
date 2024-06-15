@@ -35,6 +35,10 @@ import { roleGuardProvider } from "./guard/role/role.guard.provider";
             path: "/",
             module: ProductModule,
           },
+          {
+            path: "/",
+            module: PriceTierModule,
+          },
         ],
       },
     ]),

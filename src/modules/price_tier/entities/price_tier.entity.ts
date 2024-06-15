@@ -10,7 +10,7 @@ import {
   Table,
 } from "sequelize-typescript";
 
-@Table({ tableName: "price_tiers" })
+@Table({ tableName: "price_tiers", paranoid: true })
 export class PriceTier extends Model {
   @IsUUID(4)
   @PrimaryKey
@@ -59,4 +59,9 @@ export class PriceTier extends Model {
     type: DataType.CHAR,
   })
   updatedBy: string;
+
+  @Column({
+    type: DataType.CHAR,
+  })
+  deletedBy: string;
 }

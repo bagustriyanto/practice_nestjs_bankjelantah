@@ -13,7 +13,7 @@ import {
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
-import { Request, Response } from "express";
+import { Request, Response, response } from "express";
 import { AuthDto } from "../shared/dto/auth.dto";
 import { FilterProduct } from "./dto/filter-product";
 
@@ -37,8 +37,10 @@ export class ProductController {
   }
 
   @Get()
-  findAll(@Query() filter: FilterProduct) {
-    return this.productService.findAll(filter);
+  async findAll(@Query() filter: FilterProduct, @Res() response: Response) {
+    const result = await this.productService.findAll(filter);
+
+    return response.status(result.statusCode).send(result);
   }
 
   @Get(":id")
