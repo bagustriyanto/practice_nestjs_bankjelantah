@@ -31,14 +31,31 @@ export class Transaction extends Model {
 
   @AllowNull(false)
   @Column({
+    type: DataType.DECIMAL,
+  })
+  finalAmount: number;
+
+  @Column({
+    type: DataType.CHAR(36),
+  })
+  priceTierId: string;
+
+  @AllowNull(false)
+  @Column({
     type: DataType.DATE,
   })
   transactionTime: Date;
 
   @AllowNull(false)
+  @Column({
+    type: DataType.CHAR(36),
+  })
+  userId: string;
+
+  @AllowNull(false)
   @ForeignKey(() => Product)
   @Column({
-    type: DataType.CHAR(32),
+    type: DataType.CHAR(36),
   })
   productId: string;
 

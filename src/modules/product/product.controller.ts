@@ -13,7 +13,7 @@ import {
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
-import { Request, Response, response } from "express";
+import { Request, Response } from "express";
 import { AuthDto } from "../shared/dto/auth.dto";
 import { FilterProduct } from "./dto/filter-product";
 
