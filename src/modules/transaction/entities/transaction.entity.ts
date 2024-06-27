@@ -33,6 +33,12 @@ export class Transaction extends Model {
   @Column({
     type: DataType.DECIMAL,
   })
+  qty: number;
+
+  @AllowNull(false)
+  @Column({
+    type: DataType.DECIMAL,
+  })
   finalAmount: number;
 
   @Column({

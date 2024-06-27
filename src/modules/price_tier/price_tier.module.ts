@@ -8,5 +8,6 @@ import { DatabaseModule } from "src/database/database.module";
   imports: [DatabaseModule],
   controllers: [PriceTierController],
   providers: [PriceTierService, ...pricerTierProvider],
+  exports: [...pricerTierProvider],
 })
 export class PriceTierModule {}

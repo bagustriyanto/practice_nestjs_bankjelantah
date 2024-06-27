@@ -5,6 +5,10 @@ export class CreateTransactionDto {
   @Min(1, { message: "price cannot less than or equal to 0" })
   price: number;
 
+  @IsNotEmpty({ message: "quantity cannot be empty" })
+  @Min(1, { message: "quantity cannot less than or equal to 0" })
+  qty: number;
+
   @IsNotEmpty({ message: "product cannot be empty" })
   productId: string;
 
